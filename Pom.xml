@@ -58,8 +58,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>iso-8859-1</project.build.sourceEncoding>
-		<visualstudio.devenv>C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\msbuild.exe</visualstudio.devenv>
-		<mstest>C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\msbuild.exe</mstest>
+		<visualstudio.devenv>C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\MSBuild.exe</visualstudio.devenv>
+		<mstest>"C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\MSBuild.exe"</mstest>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>ssSS</maven.build.timestamp.format>
 	</properties>
