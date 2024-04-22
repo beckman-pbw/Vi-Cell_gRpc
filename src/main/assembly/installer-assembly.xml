@@ -1,0 +1,33 @@
+<assembly>
+  <!--
+    assembly descriptor to create a zip package containing the scripts laid
+    out as in the src/main/scripts directory.
+  -->
+  <id>installer</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <files>
+    <!-- include the build.properties file, filled in with current properties -->
+    <file>
+      <source>src/main/assembly/gRpc.manifest.txt</source>
+      <outputDirectory>lib</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+  </files>
+  <fileSets>
+    <fileSet>
+      <directory>target/Release</directory>
+      <lineEnding>keep</lineEnding>
+      <outputDirectory>lib</outputDirectory>
+      <fileMode>0755</fileMode>
+    </fileSet>
+    <fileSet>
+      <directory>target/include</directory>
+      <lineEnding>keep</lineEnding>
+      <outputDirectory>include</outputDirectory>
+      <fileMode>0755</fileMode>
+    </fileSet>
+  </fileSets>
+</assembly>

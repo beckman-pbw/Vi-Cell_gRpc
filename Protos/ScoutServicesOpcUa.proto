@@ -1,0 +1,962 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "GrpcService";
+
+package scoutservicesopcua;
+
+// *** NOTE *** : The fields within messages have a specific notation containing only undercase and underscores (enums excluded).
+// Downstream code generation will produce "vi_cell_status" into "ViCellStatus".
+// The First character and the First character directly after the '_' are capitalized downstream.
+
+//*****************************************************************************
+// Enumerations
+//*****************************************************************************
+enum ExportTypeEnum
+{
+	ExportTypeEnum_Csv = 0;
+	ExportTypeEnum_Offline = 1;
+}
+
+enum ExportImagesEnum
+{
+	ExportImagesEnum_All = 0;
+	ExportImagesEnum_FirstAndLastOnly = 1;
+	ExportImagesEnum_NthImage = 2;
+}
+
+enum WashTypeEnum
+{
+	NormalWashType = 0;
+	FastWashType = 1;
+}
+
+enum ViCellStatusEnum
+{
+	Idle = 0;
+	ProcessingSample = 1;
+	Pausing = 2;
+	Paused = 3;
+	Stopping = 4;
+	Stopped = 5;
+	Faulted = 6;
+	SearchingForTubes = 7;
+	NightlyClean = 8;
+}
+
+enum ErrorLevelEnum
+{
+	NoError = 0;
+	Error = 1;
+	Warning = 2;
+	RequiresUserInteraction = 3;
+}
+
+enum LockStateEnum
+{
+	Locked = 0;
+	Unlocked = 1;
+}
+
+enum ConfigStateEnum
+{
+	Import = 0;
+	Export = 1;
+}
+
+enum StageStateEnum
+{
+	Ejected = 0;
+	Closed = 1;
+}
+
+enum MethodResultEnum
+{
+	Failure = 0;
+	Success = 1;
+}
+
+enum AssayParameterEnum
+{
+	Concentration = 0;
+	PopulationPercentage = 1;
+	Size = 2;
+}
+
+enum CurrentInstrumentCarrierEnum
+{
+	CarouselCarrier = 0;
+	PlateCarrier = 1;
+}
+
+enum FilterOnEnum
+{
+	FilterSampleSet = 0;
+	FilterSample = 1;
+}
+
+enum ExportStatusEnum
+{
+	EsUnknown = 0;
+	EsFailed = 1;
+	EsCollecting = 2;
+	EsReady = 3;
+}
+
+enum DeleteStatusEnum
+{
+	DsUnknown = 0;
+	DsFailed = 1;
+	DsDeleting = 2;
+	DsDone = 3;
+}
+
+enum RetrieveBulkBlockStatusEnum
+{
+	RbsUnknown = 0;
+	RbsError = 1;
+	RbsBadIndex = 2;
+	RbsSuccess = 3;
+	RbsDone = 4;
+}
+
+enum TopicTypeEnum
+{
+	LockStateChangedType = 0;
+	WorkListCompleteType = 1;
+	SampleStatusChangedType = 2;
+	ViCellStatusChangedType = 3;
+	ViCellIdentifierChangedType = 4;
+	ReagentUsesRemainingChangedType = 5;
+	WasteTubeCapacityChangedType = 6;
+	DeleteSampleResultsProgressType = 7;
+	ExportStatusProgressType = 8;
+	SampleCompleteType = 9;
+	CleanFluidicsStatusType = 10;
+	PrimeReagentsStatusType = 11;
+	PurgeReagentsStatusType = 12;
+	DecontaminateStatusType = 13;
+	SoftwareVersionChangedType = 14;
+	FirmwareVersionChangedType = 15;
+	ErrorStatusChangedType = 16;
+}
+
+enum SampleStatusEnum
+{
+	NotProcessed = 0;
+	InProcessAspirating = 1;
+	InProcessMixing = 2;
+	InProcessImageAcquisition = 3;
+	InProcessCleaning = 4;
+	AcquisitionComplete = 5;
+	Completed = 6;
+	SkipManual = 7;
+	SkipError = 8;
+}
+
+enum SubstrateTypeEnum
+{
+	NoType = 0;
+	Carousel = 1;
+	Plate96 = 2;
+	AutomationCup = 3;
+}
+
+enum PrecessionEnum
+{
+	RowMajor = 0;
+	ColumnMajor = 1;
+}
+
+enum SamplePostWashEnum
+{
+	NormalWash = 0;
+	FastWash = 1;
+}
+
+enum DeclusterDegreeEnum
+{
+	None = 0;
+	Low = 1;
+	Medium = 2;
+	High = 3;
+}
+
+enum CleanFluidicsStatusEnum
+{
+	CleanFluidicsStatusEnum_Idle = 0;
+	CleanFluidicsStatusEnum_FlushingCleaner = 1;
+	CleanFluidicsStatusEnum_FlushingConditioningSolution = 2;
+	CleanFluidicsStatusEnum_FlushingBuffer = 3;
+	CleanFluidicsStatusEnum_FlushingAir = 4;
+	CleanFluidicsStatusEnum_Completed = 5;
+	CleanFluidicsStatusEnum_Failed = 6;
+}
+
+enum CellHealthFluidTypeEnum
+{
+	CellHealthFluidTypeEnum_Unknown = 0;
+	CellHealthFluidTypeEnum_TrypanBlue = 1;
+	CellHealthFluidTypeEnum_Cleaner = 2;
+	CellHealthFluidTypeEnum_ConditioningSolution = 3;
+	CellHealthFluidTypeEnum_Buffer = 4;
+	CellHealthFluidTypeEnum_Diluent = 5;
+}
+
+enum CellHealthSetAddEnum
+{
+	CellHealthSetAddEnum_Set = 0;
+	CellHealthSetAddEnum_Add = 1;
+}
+
+enum ShutdownOrRebootEnum
+{
+	ShutdownOrRebootEnum_Shutdown = 0;
+	ShutdownOrRebootEnum_Reboot = 1;
+}
+
+enum PrimeReagentsStatusEnum
+{
+	PrimeIdle = 0;
+	PrimeCleaner = 1;
+	PrimeConditioningSolution = 2;
+	PrimeBufferSolution = 3;
+	PrimeTrypanBlue = 4;
+	PrimeComplete = 5;
+	PrimeFailed = 6;
+}
+
+enum PurgeReagentsStatusEnum
+{
+	PurgeIdle = 0;
+	PurgeCleaner = 1;
+	PurgeConditioningSolution = 2;
+	PurgeBufferSolution = 3;
+	PurgeTrypanBlue = 4;
+	PurgeDiluent = 5;
+	PurgeComplete = 6;
+	PurgegFailed = 7;
+}
+
+enum DecontaminateStatusEnum
+{
+	DecontaminateStatusEnum_Idle = 0;
+	DecontaminateStatusEnum_AspiratingBleach = 1;
+	DecontaminateStatusEnum_Dispensing1 = 2;
+	DecontaminateStatusEnum_DecontaminateDelay = 3;
+	DecontaminateStatusEnum_Dispensing2 = 4;
+	DecontaminateStatusEnum_FlushingBuffer = 5;
+	DecontaminateStatusEnum_FlushingAir = 6;
+	DecontaminateStatusEnum_Completed = 7;
+	DecontaminateStatusEnum_Failed = 8;
+	DecontaminateStatusEnum_FindingTube = 9;
+	DecontaminateStatusEnum_Complete = 10;
+	DecontaminateStatusEnum_Cancelled =11;
+}
+
+enum QcStatusEnum
+{
+	Fail = 0;
+	Pass = 1;
+	NotApplicable = 2;
+}
+
+//*****************************************************************************
+// Requests
+//*****************************************************************************
+message RegistrationRequest
+{
+	// Id(s) are string-ified Guid(s).
+	string client_id = 1;
+	repeated TopicTypeEnum topic_types = 2;
+}
+
+message RegistrationResponse
+{
+	// Id(s) are string-ified Guid(s).
+	string client_id = 1;
+	string server_name = 2;
+	/* uint64 clientCookie = 3; Cookie assigned by the server which is used in further communications */
+	repeated TopicTypeEnum topic_types = 3;
+}
+
+message Topic
+{
+	// Id(s) are string-ified Guid(s).
+	string client_id = 1;
+	/* uint64 clientCookie = 1; */
+	TopicTypeEnum topic_type = 2;
+}
+
+message RequestLoginUser
+{
+	string username = 1;
+	string password = 2;
+}
+
+message RequestLogoutUser
+{
+	string username = 1;
+}
+
+message RequestRequestLock
+{
+	// Empty
+}
+
+message RequestReleaseLock
+{
+	// Empty
+}
+
+message RequestCleanSampleCup 
+{ 
+	// Empty
+}
+
+message RequestStartSample
+{
+	SampleConfig sample_config = 1;
+}
+
+message RequestStartSampleSet
+{
+	SampleSetConfig sample_set_config = 1;
+}
+
+message RequestPause
+{
+	// Empty
+}
+
+message RequestResume
+{
+	// Empty
+}
+
+message RequestStop
+{
+	// Empty
+}
+
+message RequestEjectStage
+{
+	// Empty
+}
+
+message RequestGetSampleResults
+{
+	string username = 1;
+	google.protobuf.Timestamp from_date = 2;
+	google.protobuf.Timestamp to_date = 3;
+	FilterOnEnum filter_type = 4;
+	string cell_type_quality_control_name = 5;
+	string search_name_string = 6; // Search string for sample name or sample set name (depends on Filter Type)
+	string search_tag_string = 7; // Search string for sample tag
+}
+
+message RequestDeleteSampleResults
+{
+	repeated string uuids = 1;
+	bool retain_results_and_first_image = 2;
+}
+
+message RequestCreateCellType
+{
+	CellType cell = 1;
+}
+
+message RequestDeleteCellType
+{
+	string cell_type_name = 1;
+}
+
+message RequestCreateQualityControl
+{
+	QualityControl quality_control = 1;
+}
+
+message RequestImportConfig
+{
+	bytes file_data = 1;
+}
+
+message RequestExportConfig
+{
+	// Empty
+}
+
+message RequestStartExport
+{
+	repeated string sample_list_uuid = 1;
+	ExportTypeEnum export_type = 2;
+	ExportImagesEnum image_export = 3;
+	uint32 nth_image_to_export = 4;
+	bool is_automation_export = 5;
+}
+
+message RequestRetrieveBulkDataBlock
+{
+	string bulk_data_id = 1;
+	uint32 block_index = 2;
+}
+
+message RequestGetCellTypes
+{
+	// Empty
+}
+
+message RequestGetQualityControls
+{
+	// Empty
+}
+
+message RequestGetAvailableDiskSpace
+{
+	// Empty
+}
+
+message RequestCleanFluidics
+{
+	//No params
+}
+
+message RequestGetReagentVolume
+{
+	CellHealthFluidTypeEnum type = 1;
+}
+
+message RequestSetReagentVolume
+{
+	CellHealthFluidTypeEnum type = 1;
+	int32 volume = 2;
+}
+
+message RequestAddReagentVolume
+{
+	CellHealthFluidTypeEnum type = 1;
+	int32 volume = 2;
+}
+
+message RequestShutdownOrReboot
+{
+	ShutdownOrRebootEnum operation = 1;
+}
+
+message RequestDeleteCampaignData
+{
+	//No params
+}
+
+message RequestStartLogDataExport
+{
+	string filename = 1;
+	google.protobuf.Timestamp from_date = 2;
+	google.protobuf.Timestamp to_date = 3;
+}
+
+message RequestPrimeReagents 
+{
+	// No params
+}
+
+message RequestCancelPrimeReagents
+{
+	// No params
+}
+
+message RequestPurgeReagents 
+{
+	// No params
+}
+
+message RequestCancelPurgeReagents
+{
+	// No params
+}
+
+message RequestDecontaminate 
+{
+	// No params
+}
+
+message RequestCancelDecontaminate
+{
+	// No params
+}
+
+//*****************************************************************************
+// Data Objects
+//*****************************************************************************
+message SampleConfig
+{
+	string sample_name = 1;
+	string sample_uuid = 2;
+	CellType cell_type = 3;
+	QualityControl quality_control = 4;
+	uint32 dilution = 5;
+	WashTypeEnum wash_type = 6;
+	string tag = 7;
+	SamplePosition sample_position = 8;
+	uint32 save_every_nth_image = 9;
+	SampleStatusEnum sample_status = 10;
+}
+
+message DeleteSampleResultsArgs
+{
+	DeleteStatusEnum delete_status = 1;
+	int32 percent_complete = 2;
+	string username = 3;
+}
+
+message SampleResult
+{
+    string sample_data_uuid = 1;
+	string sample_id = 2;
+	SampleStatusEnum status = 3;
+	uint32 cell_count = 4;
+	uint32 viable_cells = 5;
+	double total_cells_per_milliliter = 6;
+	double viable_cells_per_milliliter = 7;
+	double viability_percent = 8;
+	double average_diameter = 9;
+	double average_viable_diameter = 10;
+	double average_circularity = 11;
+	double average_viable_circularity = 12;
+	double average_cells_per_image = 13;
+	uint32 average_background_intensity = 14;
+	uint32 bubble_count = 15;
+	uint32 cluster_count = 16;
+	uint32 images_for_analysis = 17;
+	string quality_control_name = 18;
+	string cell_type = 19;
+	double minimum_diameter = 20;
+	double maximum_diameter = 21;
+	int32 images = 22;
+	float cell_sharpness = 23;
+	double minimum_circularity = 24;
+	DeclusterDegreeEnum decluster_degree = 25;
+	int32 aspiration_cycles = 26;
+	float viable_spot_brightness = 27;
+	float viable_spot_area = 28;
+	int32 mixing_cycles = 29;
+	float concentration_adjustment_factor = 30;
+	google.protobuf.Timestamp analysis_date_time = 31;
+	google.protobuf.Timestamp reanalysis_date_time = 32;
+	string analysis_by = 33;
+	string reanalysis_by = 34;
+	uint32 dilution = 35;
+	WashTypeEnum wash_type = 36;
+	string tag = 37;
+	SamplePosition position = 38;
+	QcStatusEnum qc_status = 39;
+}
+
+message SamplePosition
+{
+	string row = 1;
+	uint32 column = 2;
+}
+
+message SampleRecordDomain
+{
+	bool is_single_export_status = 1;
+	string uuid_dll = 2;
+	uint32 num_of_result_record = 3;
+	ImageSet image_set = 4;
+}
+
+message ImageSet
+{
+	Image brightfield_image = 1;
+	repeated Image flourescence_images = 2;
+}
+
+message Image
+{
+	uint32 rows = 1;
+	uint32 cols = 2;
+	bytes type = 3;
+	uint32 step = 4;
+	bytes image_source = 5; //BitmapSource
+	string saved_filename = 6;
+}
+
+message SampleSetConfig
+{
+	string sample_set_name = 1;
+	string sample_set_uuid = 2;
+	PrecessionEnum plate_precession = 3;
+	repeated SampleConfig samples = 4;
+}
+
+message CellType
+{
+	string cell_type_name = 1;
+	double min_diameter = 2;
+	double max_diameter = 3;
+	int32 num_images = 4;
+	float cell_sharpness = 5;
+	double min_circularity = 6;
+	DeclusterDegreeEnum decluster_degree = 7;
+	int32 num_aspiration_cycles = 8;
+	float viable_spot_brightness = 9;
+	float viable_spot_area = 10;
+	int32 num_mixing_cycles = 11;
+	float concentration_adjustment_factor = 12;
+}
+
+message QualityControl
+{
+	string quality_control_name = 1;
+	string cell_type_name = 2;
+	AssayParameterEnum assay_parameter = 3;
+	string lot_number = 4;
+	double assay_value = 5;
+	int32 acceptance_limits = 6;
+	google.protobuf.Timestamp expiration_date = 7;
+	string comments = 8;
+}
+
+message SampleStatusData
+{
+	string sample_id = 1;
+	string analysis_by = 2; //this is the username of whoever created the sample
+	SampleStatusEnum sample_status = 3;
+	SamplePosition sample_position = 4;
+	string sample_data_uuid = 5;
+}
+
+//*****************************************************************************
+// Result Objects Returned
+//*****************************************************************************
+message VcbResult
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+}
+
+message VcbResultGetCellTypes
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+	repeated CellType cell_types = 4;
+}
+
+message VcbResultCreateCellType
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+}
+
+message VcbResultRequestLock
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+	LockStateEnum lock_state = 4;
+}
+
+message VcbResultReleaseLock
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+	LockStateEnum lock_state = 4;
+}
+
+message VcbResultDeleteCellType
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+}
+
+message VcbResultGetQualityControls
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+	repeated QualityControl quality_controls = 4;
+}
+
+message VcbResultGetDiskSpace
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+	double total_size_bytes = 4;
+	double total_free_bytes = 5;
+	double disk_space_other_bytes = 6;
+	double disk_space_data_bytes = 7;
+	double disk_space_export_bytes = 8;
+}
+
+message VcbResultEjectStage
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+}
+
+message VcbResultGetSampleResults
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+	repeated SampleResult sample_results = 4;
+}
+
+message VcbResultStartExport
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+	string bulk_data_id = 4;
+}
+
+message VcbResultRetrieveBulkDataBlock
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+
+    string bulk_data_id = 4;
+	uint32 block_index = 5;
+	RetrieveBulkBlockStatusEnum status = 6;
+	bytes sample_results_zip_file_bytes = 7;
+}
+
+message VcbResultExportConfig
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+	bytes file_data = 4;
+}
+
+message VcbResultReagentVolume
+{
+	MethodResultEnum method_result = 1;
+	string description = 2;
+	ErrorLevelEnum error_level = 3;
+	int32 volume = 4;
+}
+
+//*****************************************************************************
+// Events
+//*****************************************************************************
+
+// Included in all event message objects
+message Notification
+{
+	// Id(s) are string-ified Guid(s).
+	string client_id = 1;
+	string server_name = 2;
+	TopicTypeEnum topic_type = 3;
+}
+
+// Triggered when the Vi-CELL BLU lock state is changed. We need to notify the
+// automation instrument that the lock has been granted or released.
+message LockStateChangedEvent
+{
+	Notification notification = 1;
+	LockStateEnum lock_state = 2;
+}
+
+// Triggered when the Vi-CELL BLU state is changed. We need to notify the
+// automation instrument of the new state.
+// *** NOTE *** : The field in this message is notated "vi_cell_status" because
+// when code is generated downstream, the field is "ViCellStatus". 
+// The First character and characters directly after '_' are capitalized.
+message ViCellStatusChangedEvent
+{
+	Notification notification = 1;
+	ViCellStatusEnum vi_cell_status = 2;
+}
+
+// Triggered when the Vi-CELL Identification string is changed. We need to notify the
+// automation instrument of the new state
+// *** NOTE *** : The field in this message is notated "vi_cell_id" because
+// when code is generated downstream, the field is "ViCellId". 
+// The First character and characters directly after '_' are capitalized.
+message ViCellIdentifierChangedEvent
+{
+	Notification notification = 1;
+	string vi_cell_identifier = 2;
+}
+
+// Triggered when the software version is changed. We need to notify the
+// automation instrument of the new state
+message SoftwareVersionChangedEvent
+{
+	Notification notification = 1;
+	string version = 2;
+}
+
+// Triggered when the firmware version is changed. We need to notify the
+// automation instrument of the new state
+message FirmwareVersionChangedEvent
+{
+	Notification notification = 1;
+	string version = 2;
+}
+
+// Triggered when the Reagent Uses Remaining is changed. We need to notify the
+// automation instrument of the new state
+message ReagentUsesRemainingChangedEvent
+{
+	Notification notification = 1;
+	int32 reagent_uses_remaining = 2;
+}
+
+// Triggered when the Waste Tube Remaining Capacity is changed. We need to notify the
+// automation instrument of the new state
+message WasteTubeCapacityChangedEvent
+{
+	Notification notification = 1;
+	int32 waste_tube_remaining_capacity = 2;
+}
+
+// Triggered when a sample status has changed during analysis
+message SampleStatusChangedEvent
+{
+	Notification notification = 1;
+	SampleStatusData sample_status_data = 2;
+}
+
+message SampleCompleteEvent
+{
+	Notification notification = 1;
+	SampleResult sample_result_data = 2;
+}
+
+// Triggered each time a sample result has been deleted from the desired list
+message DeleteSampleResultsProgressEvent
+{
+	Notification notification = 1;
+	DeleteSampleResultsArgs delete_sample_results_args = 2;
+}
+
+// Triggered when all samples in work list have completed
+message WorkListCompleteEvent
+{
+	Notification notification = 1;
+	repeated string sample_data_uuid_list = 2;
+}
+
+message ExportStatusData
+{
+	string bulk_data_id = 1;
+	ExportStatusEnum status = 2;
+	uint32 percent = 3;
+	string username = 4;
+}
+
+message ExportStatusEvent
+{
+	Notification notification = 1;
+	ExportStatusData status_info = 2;
+}
+
+message CleanFluidicsStatusEvent
+{
+	CleanFluidicsStatusEnum status = 1;
+}
+
+message PrimeReagentsStatusEvent
+{
+	PrimeReagentsStatusEnum status = 1;
+}
+
+message PurgeReagentsStatusEvent
+{
+	PurgeReagentsStatusEnum status = 1;
+}
+
+message DecontaminateStatusEvent
+{
+	DecontaminateStatusEnum status = 1;
+}
+
+message ErrorStatusType
+{
+	string error_code = 1;
+	string severity = 2;
+	string system = 3;
+	string sub_system = 4;
+	string instance = 5;
+	string failure_mode = 6;
+}
+
+message ErrorStatusEvent
+{
+	Notification notification = 1;
+	ErrorStatusType status= 2;
+}
+
+//*****************************************************************************
+// Service Definitions
+//*****************************************************************************
+service GrpcServices
+{
+	rpc RequestLock(RequestRequestLock) returns (VcbResultRequestLock);
+	rpc ReleaseLock(RequestReleaseLock) returns (VcbResultReleaseLock);
+	rpc StartSample(RequestStartSample) returns (VcbResult);
+	rpc StartSampleSet(RequestStartSampleSet) returns (VcbResult);
+	rpc Pause(RequestPause) returns (VcbResult);
+	rpc Resume(RequestResume) returns (VcbResult);
+	rpc Stop(RequestStop) returns (VcbResult);
+	rpc EjectStage(RequestEjectStage) returns (VcbResultEjectStage);
+	rpc GetSampleResults(RequestGetSampleResults) returns (VcbResultGetSampleResults);
+	rpc DeleteSampleResults(RequestDeleteSampleResults) returns (VcbResult);
+	rpc CreateCellType(RequestCreateCellType) returns (VcbResultCreateCellType);
+	rpc DeleteCellType(RequestDeleteCellType) returns (VcbResultDeleteCellType);
+	rpc CreateQualityControl(RequestCreateQualityControl) returns (VcbResult);
+	rpc ImportConfig(RequestImportConfig) returns (VcbResult);
+	rpc ExportConfig(RequestExportConfig) returns (VcbResultExportConfig);
+	rpc StartExport(RequestStartExport) returns (VcbResultStartExport);
+	rpc RetrieveBulkDataBlock(RequestRetrieveBulkDataBlock) returns (VcbResultRetrieveBulkDataBlock);
+	rpc GetCellTypes(RequestGetCellTypes) returns (VcbResultGetCellTypes);
+	rpc GetQualityControls(RequestGetQualityControls) returns (VcbResultGetQualityControls);
+	rpc GetAvailableDiskSpace(RequestGetAvailableDiskSpace) returns (VcbResultGetDiskSpace);
+	rpc LoginRemoteUser(RequestLoginUser) returns (VcbResult);
+	rpc LogoutRemoteUser(RequestLogoutUser) returns (VcbResult);
+	rpc CleanFluidics(RequestCleanFluidics) returns (VcbResult);
+	rpc GetReagentVolume(RequestGetReagentVolume) returns (VcbResultReagentVolume);
+	rpc SetReagentVolume(RequestSetReagentVolume) returns (VcbResult);
+	rpc AddReagentVolume(RequestAddReagentVolume) returns (VcbResult);
+	rpc ShutdownOrReboot(RequestShutdownOrReboot) returns (VcbResult);
+	rpc DeleteCampaignData(RequestDeleteCampaignData) returns (VcbResult);
+	rpc StartLogDataExport(RequestStartLogDataExport) returns (VcbResultStartExport);
+	rpc PrimeReagents(RequestPrimeReagents) returns (VcbResult);
+	rpc CancelPrimeReagents(RequestCancelPrimeReagents) returns (VcbResult);	
+	rpc PurgeReagents(RequestPurgeReagents) returns (VcbResult);
+	rpc CancelPurgeReagents(RequestCancelPurgeReagents) returns (VcbResult);	
+	rpc Decontaminate(RequestDecontaminate) returns (VcbResult);
+	rpc CancelDecontaminate(RequestCancelDecontaminate) returns (VcbResult);	
+
+	// Event Support
+	rpc SubscribeLockState (RegistrationRequest) returns (stream .scoutservicesopcua.LockStateChangedEvent);	
+	rpc SubscribeSampleStatus (RegistrationRequest)  returns (stream .scoutservicesopcua.SampleStatusChangedEvent);
+	rpc SubscribeSampleComplete (RegistrationRequest) returns (stream .scoutservicesopcua.SampleCompleteEvent);
+	rpc SubscribeWorkListComplete (RegistrationRequest)  returns (stream .scoutservicesopcua.WorkListCompleteEvent);
+	rpc SubscribeDeleteSampleResultsProgress (RegistrationRequest) returns (stream .scoutservicesopcua.DeleteSampleResultsProgressEvent);
+	rpc SubscribeViCellStatus (RegistrationRequest) returns (stream .scoutservicesopcua.ViCellStatusChangedEvent);
+	rpc SubscribeViCellIdentifier (RegistrationRequest) returns (stream .scoutservicesopcua.ViCellIdentifierChangedEvent);
+	rpc SubscribeReagentUsesRemaining (RegistrationRequest) returns (stream .scoutservicesopcua.ReagentUsesRemainingChangedEvent);
+	rpc SubscribeWasteTubeCapacity (RegistrationRequest) returns (stream .scoutservicesopcua.WasteTubeCapacityChangedEvent);
+	rpc SubscribeExportStatus (RegistrationRequest) returns (stream .scoutservicesopcua.ExportStatusEvent);
+	rpc SubscribeExportLogStatus (RegistrationRequest) returns (stream .scoutservicesopcua.ExportStatusEvent);
+	rpc SubscribeCleanFluidicsStatus(RegistrationRequest) returns (stream .scoutservicesopcua.CleanFluidicsStatusEvent);
+	rpc SubscribePrimeReagentsStatus(RegistrationRequest) returns (stream .scoutservicesopcua.PrimeReagentsStatusEvent);
+	rpc SubscribePurgeReagentsStatus(RegistrationRequest) returns (stream .scoutservicesopcua.PurgeReagentsStatusEvent);
+	rpc SubscribeDecontaminateStatus(RegistrationRequest) returns (stream .scoutservicesopcua.DecontaminateStatusEvent);	
+	rpc SubscribeSoftwareVersion (RegistrationRequest) returns (stream .scoutservicesopcua.SoftwareVersionChangedEvent);
+	rpc SubscribeFirmwareVersion (RegistrationRequest) returns (stream .scoutservicesopcua.FirmwareVersionChangedEvent);
+	rpc SubscribeErrorStatus (RegistrationRequest) returns (stream .scoutservicesopcua.ErrorStatusEvent);
+}

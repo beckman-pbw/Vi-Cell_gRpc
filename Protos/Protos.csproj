@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<Version>1.0.0.0</Version>
+	<Company>Beckman Coulter</Company>
+	<Product>Scout gRPC Protocol Definition</Product>
+	<Description>This gRPC protocol definition mirrors the OPC/UA model design and acts as the interface
+	to decouple the OPC/UA server process from the ScoutX process.</Description>
+	<Copyright>Copyright © 2020 Beckman Coulter. All rights reserved.</Copyright>
+	<OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Protobuf Include="ScoutServicesOpcUa.proto" GrpcServices="Both" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.14.0" />
+    <PackageReference Include="Grpc" Version="2.35.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.35.0" PrivateAssets="All" />
+    <PackageReference Include="System.Buffers" Version="4.5.1" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if $(ConfigurationName) == Debug (&#xD;&#xA;    copy &quot;$(ProjectDir)bin\Debug\net48\*.dll&quot;   \Instrument\Software&#xD;&#xA;    copy &quot;$(ProjectDir)bin\Debug\net48\Protos.pdb&quot; \Instrument\Software&#xD;&#xA;    copy &quot;$(ProjectDir)bin\Debug\net48\*.dll&quot;   \Instrument\OpcUaServer&#xD;&#xA;    copy &quot;$(ProjectDir)bin\Debug\net48\Protos.pdb&quot; \Instrument\OpcUaServer&#xD;&#xA;)&#xD;&#xA;" />
+  </Target>
+
+</Project>
