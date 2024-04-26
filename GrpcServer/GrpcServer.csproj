@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="Google.Protobuf" Version="3.14.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.26.1" />
     <PackageReference Include="Grpc" Version="2.35.0" />
     <PackageReference Include="Grpc.Tools" Version="2.35.0" PrivateAssets="All" />
     <PackageReference Include="Ninject.Extensions.Logging" Version="3.3.0" />
