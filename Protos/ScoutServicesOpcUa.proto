@@ -942,9 +942,9 @@ service GrpcServices
 
 	// Event Support
 	rpc SubscribeLockState (RegistrationRequest) returns (stream .scoutservicesopcua.LockStateChangedEvent);	
-	rpc SubscribeSampleStatus (RegistrationRequest)  returns (stream .scoutservicesopcua.SampleStatusChangedEvent);
+	rpc SubscribeSampleStatus (RegistrationRequest) returns (stream .scoutservicesopcua.SampleStatusChangedEvent);
 	rpc SubscribeSampleComplete (RegistrationRequest) returns (stream .scoutservicesopcua.SampleCompleteEvent);
-	rpc SubscribeWorkListComplete (RegistrationRequest)  returns (stream .scoutservicesopcua.WorkListCompleteEvent);
+	rpc SubscribeWorkListComplete (RegistrationRequest) returns (stream .scoutservicesopcua.WorkListCompleteEvent);
 	rpc SubscribeDeleteSampleResultsProgress (RegistrationRequest) returns (stream .scoutservicesopcua.DeleteSampleResultsProgressEvent);
 	rpc SubscribeViCellStatus (RegistrationRequest) returns (stream .scoutservicesopcua.ViCellStatusChangedEvent);
 	rpc SubscribeViCellIdentifier (RegistrationRequest) returns (stream .scoutservicesopcua.ViCellIdentifierChangedEvent);
