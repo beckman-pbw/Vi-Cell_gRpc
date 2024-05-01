@@ -26,10 +26,10 @@ enum ExportImagesEnum
 	ExportImagesEnum_NthImage = 2;
 }
 
-enum WashTypeEnum
+enum WorkflowTypeEnum
 {
-	NormalWashType = 0;
-	FastWashType = 1;
+	NormalWorkflowType = 0;
+	LowCellDensityWorkflowType = 1;
 }
 
 enum ViCellStatusEnum
@@ -169,10 +169,10 @@ enum PrecessionEnum
 	ColumnMajor = 1;
 }
 
-enum SamplePostWashEnum
+enum SampleWorkflowEnum
 {
-	NormalWash = 0;
-	FastWash = 1;
+	NormalWorkflow = 0;
+	LowCellDensityWorkflow = 1;
 }
 
 enum DeclusterDegreeEnum
@@ -496,7 +496,7 @@ message SampleConfig
 	CellType cell_type = 3;
 	QualityControl quality_control = 4;
 	uint32 dilution = 5;
-	WashTypeEnum wash_type = 6;
+	WorkflowTypeEnum workflow_type = 6;
 	string tag = 7;
 	SamplePosition sample_position = 8;
 	uint32 save_every_nth_image = 9;
@@ -547,7 +547,7 @@ message SampleResult
 	string analysis_by = 33;
 	string reanalysis_by = 34;
 	uint32 dilution = 35;
-	WashTypeEnum wash_type = 36;
+	WorkflowTypeEnum workflow_type = 36;
 	string tag = 37;
 	SamplePosition position = 38;
 	QcStatusEnum qc_status = 39;
